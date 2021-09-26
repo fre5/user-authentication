@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import { User, UserStore } from '../models/user';
 import jwt from 'jsonwebtoken';
 
@@ -22,27 +22,24 @@ const create = async (req: Request, res: Response) => {
   }
 };
 
-const authenticate = async (req: Request, res: Response) => {
+const authenticate = async (req: Request, res: Response, next: NextFunction) => {
   const username = req.body.username;
   const password = req.body.password;
   try {
     const authHeader: string = req.headers.authorization as string;
     const token: string = authHeader.split(' ')[1];
-    jwt.verify(token, process.env.TOKEN_SECRET as string) as { user: { id: number, username: string, passwordDigest: string }, iat: number };
-    const user = await store.authenticate(username, password);
-    res.json(user);
+    jwt.verify(token, process.env.TOKEN_SECRET as string) as { user: User, iat: number };
+    await store.authenticate(username, password);
+    next();
   } catch (err) {
     res.status(401);
-    res.json(err);
+    res.send(err);
   }
 };
 
 const find = async (req: Request, res: Response) => {
   const username = req.body.username;
   try {
-    const authHeader: string = req.headers.authorization as string;
-    const token: string = authHeader.split(' ')[1];
-    jwt.verify(token, process.env.TOKEN_SECRET as string) as { user: { id: number, username: string, passwordDigest: string }, iat: number };
     const id = await store.find(username);
     res.json(id);
   } catch (err) {
@@ -56,11 +53,8 @@ const updateName = async (req: Request, res: Response) => {
   const newFirstname = req.body.newFirstname;
   const newLastname = req.body.newLastname;
   try {
-    const authHeader: string = req.headers.authorization as string;
-    const token: string = authHeader.split(' ')[1];
-    jwt.verify(token, process.env.TOKEN_SECRET as string) as { user: { id: number, username: string, passwordDigest: string }, iat: number };
     const update = await store.updateName(newFirstname, newLastname, username);
-    res.json(update);
+    res.send(update);
   } catch (err) {
     res.status(401);
     res.json(err);
@@ -71,11 +65,8 @@ const updateUser = async (req: Request, res: Response) => {
   const username = req.body.username;
   const newUsername = req.body.newUsername;
   try {
-    const authHeader: string = req.headers.authorization as string;
-    const token: string = authHeader.split(' ')[1];
-    jwt.verify(token, process.env.TOKEN_SECRET as string) as { user: { id: number, username: string, passwordDigest: string }, iat: number };
     const update = await store.updateUser(username, newUsername);
-    res.json(update);
+    res.send(update);
   } catch (err) {
     res.status(401);
     res.json(err);
@@ -86,11 +77,8 @@ const updatePassword = async (req: Request, res: Response) => {
   const username = req.body.username;
   const newPassword = req.body.newPassword;
   try {
-    const authHeader: string = req.headers.authorization as string;
-    const token: string = authHeader.split(' ')[1];
-    jwt.verify(token, process.env.TOKEN_SECRET as string) as { user: { id: number, username: string, passwordDigest: string }, iat: number };
     const update = await store.updatePassword(username, newPassword);
-    res.json(update);
+    res.send(update);
   } catch (err) {
     res.status(401);
     res.json(err);
@@ -100,9 +88,6 @@ const updatePassword = async (req: Request, res: Response) => {
 const remove = async (req: Request, res: Response) => {
   const id = req.body.id;
   try {
-    const authHeader: string = req.headers.authorization as string;
-    const token: string = authHeader.split(' ')[1];
-    jwt.verify(token, process.env.TOKEN_SECRET as string) as { user: { id: number, username: string, passwordDigest: string }, iat: number };
     await store.remove(id);
     res.send('User deleted');
   } catch (err) {
@@ -115,10 +100,10 @@ const userRoutes = (app: express.Application) => {
   app.get('/user', find);
   app.post('/user', create);
   app.post('/user/auth', authenticate);
-  app.put('/user/name', updateName);
-  app.put('/user/user', updateUser);
-  app.put('/user/pass', updatePassword);
-  app.delete('/user', remove);
+  app.put('/user/name', authenticate, updateName);
+  app.put('/user/user', authenticate, updateUser);
+  app.put('/user/pass', authenticate, updatePassword);
+  app.delete('/user', authenticate, remove);
 };
 
 export default userRoutes;

@@ -72,7 +72,7 @@ var create = function (req, res) { return __awaiter(void 0, void 0, void 0, func
         }
     });
 }); };
-var authenticate = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var authenticate = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var username, password, authHeader, token, decoded, admin, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -90,7 +90,8 @@ var authenticate = function (req, res) { return __awaiter(void 0, void 0, void 0
             case 2: return [4 /*yield*/, store.authenticate(username, password)];
             case 3:
                 admin = _a.sent();
-                res.json(admin);
+                //res.json(admin);
+                next();
                 _a.label = 4;
             case 4: return [3 /*break*/, 6];
             case 5:
@@ -210,6 +211,7 @@ var remove = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 return [4 /*yield*/, store.remove(id)];
             case 2:
                 _a.sent();
+                res.send('Admin deleted');
                 return [3 /*break*/, 4];
             case 3:
                 err_7 = _a.sent();
@@ -221,39 +223,33 @@ var remove = function (req, res) { return __awaiter(void 0, void 0, void 0, func
     });
 }); };
 var indexUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var authHeader, token, decoded, index, err_8;
+    var index, err_8;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 4, , 5]);
-                authHeader = req.headers.authorization;
-                token = authHeader.split(' ')[1];
-                decoded = jsonwebtoken_1.default.verify(token, process.env.TOKEN_SECRET);
-                if (!(decoded.admin.account !== 'admin')) return [3 /*break*/, 1];
-                throw new Error('Not admin account');
-            case 1: return [4 /*yield*/, store.indexUser()];
-            case 2:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, store.indexUser()];
+            case 1:
                 index = _a.sent();
                 res.json(index);
-                _a.label = 3;
-            case 3: return [3 /*break*/, 5];
-            case 4:
+                return [3 /*break*/, 3];
+            case 2:
                 err_8 = _a.sent();
                 res.status(401);
                 res.json(err_8);
-                return [3 /*break*/, 5];
-            case 5: return [2 /*return*/];
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
 var adminRoutes = function (app) {
-    app.get('/admin', authenticate, find);
     app.post('/admin', create);
     app.post('/admin/auth', authenticate);
     app.put('/admin/name', authenticate, updateName);
     app.put('/admin/user', authenticate, updateUser);
     app.put('/admin/pass', authenticate, updatePassword);
     app.delete('/admin', authenticate, remove);
-    app.get('/admin/userindex', authenticate, indexUser);
+    app.get('/admin', authenticate, find);
+    app.get('/admin/users', authenticate, indexUser);
 };
 exports.default = adminRoutes;

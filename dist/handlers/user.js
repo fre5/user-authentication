@@ -72,8 +72,8 @@ var create = function (req, res) { return __awaiter(void 0, void 0, void 0, func
         }
     });
 }); };
-var authenticate = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var username, password, authHeader, token, user, err_2;
+var authenticate = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var username, password, authHeader, token, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -87,20 +87,20 @@ var authenticate = function (req, res) { return __awaiter(void 0, void 0, void 0
                 jsonwebtoken_1["default"].verify(token, process.env.TOKEN_SECRET);
                 return [4 /*yield*/, store.authenticate(username, password)];
             case 2:
-                user = _a.sent();
-                res.json(user);
+                _a.sent();
+                next();
                 return [3 /*break*/, 4];
             case 3:
                 err_2 = _a.sent();
                 res.status(401);
-                res.json(err_2);
+                res.send(err_2);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); };
 var find = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var username, authHeader, token, id, err_3;
+    var username, id, err_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -108,9 +108,6 @@ var find = function (req, res) { return __awaiter(void 0, void 0, void 0, functi
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                authHeader = req.headers.authorization;
-                token = authHeader.split(' ')[1];
-                jsonwebtoken_1["default"].verify(token, process.env.TOKEN_SECRET);
                 return [4 /*yield*/, store.find(username)];
             case 2:
                 id = _a.sent();
@@ -126,7 +123,7 @@ var find = function (req, res) { return __awaiter(void 0, void 0, void 0, functi
     });
 }); };
 var updateName = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var username, newFirstname, newLastname, authHeader, token, update, err_4;
+    var username, newFirstname, newLastname, update, err_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -136,13 +133,10 @@ var updateName = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                authHeader = req.headers.authorization;
-                token = authHeader.split(' ')[1];
-                jsonwebtoken_1["default"].verify(token, process.env.TOKEN_SECRET);
                 return [4 /*yield*/, store.updateName(newFirstname, newLastname, username)];
             case 2:
                 update = _a.sent();
-                res.json(update);
+                res.send(update);
                 return [3 /*break*/, 4];
             case 3:
                 err_4 = _a.sent();
@@ -154,7 +148,7 @@ var updateName = function (req, res) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 var updateUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var username, newUsername, authHeader, token, update, err_5;
+    var username, newUsername, update, err_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -163,13 +157,10 @@ var updateUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                authHeader = req.headers.authorization;
-                token = authHeader.split(' ')[1];
-                jsonwebtoken_1["default"].verify(token, process.env.TOKEN_SECRET);
                 return [4 /*yield*/, store.updateUser(username, newUsername)];
             case 2:
                 update = _a.sent();
-                res.json(update);
+                res.send(update);
                 return [3 /*break*/, 4];
             case 3:
                 err_5 = _a.sent();
@@ -181,7 +172,7 @@ var updateUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 var updatePassword = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var username, newPassword, authHeader, token, update, err_6;
+    var username, newPassword, update, err_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -190,13 +181,10 @@ var updatePassword = function (req, res) { return __awaiter(void 0, void 0, void
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                authHeader = req.headers.authorization;
-                token = authHeader.split(' ')[1];
-                jsonwebtoken_1["default"].verify(token, process.env.TOKEN_SECRET);
                 return [4 /*yield*/, store.updatePassword(username, newPassword)];
             case 2:
                 update = _a.sent();
-                res.json(update);
+                res.send(update);
                 return [3 /*break*/, 4];
             case 3:
                 err_6 = _a.sent();
@@ -208,7 +196,7 @@ var updatePassword = function (req, res) { return __awaiter(void 0, void 0, void
     });
 }); };
 var remove = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, authHeader, token, err_7;
+    var id, err_7;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -216,9 +204,6 @@ var remove = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                authHeader = req.headers.authorization;
-                token = authHeader.split(' ')[1];
-                jsonwebtoken_1["default"].verify(token, process.env.TOKEN_SECRET);
                 return [4 /*yield*/, store.remove(id)];
             case 2:
                 _a.sent();
@@ -237,9 +222,9 @@ var userRoutes = function (app) {
     app.get('/user', find);
     app.post('/user', create);
     app.post('/user/auth', authenticate);
-    app.put('/user/name', updateName);
-    app.put('/user/user', updateUser);
-    app.put('/user/pass', updatePassword);
-    app["delete"]('/user', remove);
+    app.put('/user/name', authenticate, updateName);
+    app.put('/user/user', authenticate, updateUser);
+    app.put('/user/pass', authenticate, updatePassword);
+    app["delete"]('/user', authenticate, remove);
 };
 exports["default"] = userRoutes;

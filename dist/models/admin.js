@@ -154,7 +154,7 @@ var AdminStore = /** @class */ (function () {
                         return [4 /*yield*/, conn.query(sql, [newFirstname, newLastname, username])];
                     case 3:
                         _a.sent();
-                        _a.label = 4;
+                        return [2 /*return*/, 'Name update success'];
                     case 4:
                         conn.release();
                         return [3 /*break*/, 6];
@@ -189,7 +189,7 @@ var AdminStore = /** @class */ (function () {
                     case 4:
                         _a.sent();
                         conn.release();
-                        _a.label = 5;
+                        return [2 /*return*/, 'Username update success'];
                     case 5: return [3 /*break*/, 7];
                     case 6:
                         err_4 = _a.sent();
@@ -219,7 +219,7 @@ var AdminStore = /** @class */ (function () {
                     case 3:
                         _a.sent();
                         conn.release();
-                        _a.label = 4;
+                        return [2 /*return*/, 'Password update success'];
                     case 4: return [3 /*break*/, 6];
                     case 5:
                         err_5 = _a.sent();
@@ -244,7 +244,7 @@ var AdminStore = /** @class */ (function () {
                     case 2:
                         _a.sent();
                         conn.release();
-                        return [3 /*break*/, 4];
+                        return [2 /*return*/, 'Admin account removal success'];
                     case 3:
                         err_6 = _a.sent();
                         throw new Error("Unable to delete user id " + id);

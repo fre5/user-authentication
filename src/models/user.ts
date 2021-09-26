@@ -66,7 +66,7 @@ export class UserStore {
     }
   }
 
-  async updateName (newFirstname: string, newLastname: string, username: string): Promise<void> {
+  async updateName (newFirstname: string, newLastname: string, username: string): Promise<string> {
     try {
       // @ts-ignore
       const conn = await Client.connect();
@@ -78,12 +78,13 @@ export class UserStore {
         await conn.query(sql, [newFirstname, newLastname, username]);
       }
       conn.release();
+      return 'Name update success';
     } catch (err) {
       throw new Error(`Unable to update user information ${err}`);
     }
   }
 
-  async updateUser (username: string, newUsername: string): Promise<void> {
+  async updateUser (username: string, newUsername: string): Promise<string> {
     try {
       // @ts-ignore
       const conn = await Client.connect();
@@ -96,13 +97,14 @@ export class UserStore {
         const newSql = 'UPDATE users SET username=($2) WHERE username=($1)';
         await conn.query(newSql, [username, newUsername]);
         conn.release();
+        return 'Username update success';
       }
     } catch (err) {
       throw new Error(`Unable to update username ${err}`);
     }
   }
 
-  async updatePassword (username: string, newPassword: string): Promise<void> {
+  async updatePassword (username: string, newPassword: string): Promise<string> {
     try {
       const same = await this.authenticate(username, newPassword);
       if (!same) {
@@ -112,19 +114,21 @@ export class UserStore {
         const hash = bcrypt.hashSync(newPassword + pepper, parseInt(saltRounds));
         await conn.query(newSql, [hash, username]);
         conn.release();
+        return 'Password update success';
       }
     } catch (err) {
       throw new Error(`Unable to update password ${err}`);
     }
   }
 
-  async remove (id: number): Promise<void> {
+  async remove (id: number): Promise<string> {
     try {
       // @ts-ignore
       const conn = await Client.connect();
       const sql = 'DELETE FROM users WHERE id=($1)';
       await conn.query(sql, [id]);
       conn.release();
+      return 'User account removal success';
     } catch (err) {
       throw new Error(`Unable to delete user id ${id}`);
     }
