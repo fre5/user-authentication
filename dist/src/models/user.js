@@ -66,9 +66,9 @@ var UserStore = /** @class */ (function () {
                         if (!row) return [3 /*break*/, 3];
                         throw new Error('Username not available');
                     case 3:
-                        sql_1 = 'INSERT INTO users (firstname, lastname, username, password_digest) VALUES ($1, $2, $3, $4) RETURNING *';
+                        sql_1 = 'INSERT INTO users (firstname, lastname, username, password_digest, account) VALUES ($1, $2, $3, $4, $5) RETURNING *';
                         hash = bcrypt_1.default.hashSync(u.password + pepper, parseInt(saltRounds));
-                        return [4 /*yield*/, conn.query(sql_1, [u.firstname, u.lastname, u.username, hash])];
+                        return [4 /*yield*/, conn.query(sql_1, [u.firstname, u.lastname, u.username, hash, u.account])];
                     case 4:
                         result_1 = _a.sent();
                         user = result_1.rows[0];
@@ -91,7 +91,7 @@ var UserStore = /** @class */ (function () {
                     case 0: return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
-                        sql = 'SELECT id, username, password_digest FROM users WHERE username=($1)';
+                        sql = 'SELECT account, password_digest FROM users WHERE username=($1)';
                         return [4 /*yield*/, conn.query(sql, [username])];
                     case 2:
                         result = _a.sent();

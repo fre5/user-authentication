@@ -85,7 +85,7 @@ var AdminStore = /** @class */ (function () {
     };
     AdminStore.prototype.authenticate = function (username, password) {
         return __awaiter(this, void 0, void 0, function () {
-            var conn, sql, result, user;
+            var conn, sql, result, admin;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, database_1.default.connect()];
@@ -96,10 +96,10 @@ var AdminStore = /** @class */ (function () {
                     case 2:
                         result = _a.sent();
                         if (result.rows.length) {
-                            user = result.rows[0];
-                            if (bcrypt_1.default.compareSync(password + pepper, user.password_digest)) {
+                            admin = result.rows[0];
+                            if (bcrypt_1.default.compareSync(password + pepper, admin.password_digest)) {
                                 conn.release();
-                                return [2 /*return*/, user];
+                                return [2 /*return*/, admin];
                             }
                         }
                         conn.release();

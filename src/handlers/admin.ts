@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import { Admin, AdminStore } from '../models/admin';
 import jwt from 'jsonwebtoken';
 
@@ -22,7 +22,7 @@ const create = async (req: Request, res: Response) => {
   }
 };
 
-const authenticate = async (req: Request, res: Response) => {
+const authenticate = async (req: Request, res: Response, next: NextFunction) => {
   const username = req.body.username;
   const password = req.body.password;
   try {
@@ -34,7 +34,8 @@ const authenticate = async (req: Request, res: Response) => {
       throw new Error('Not admin account');
     } else {
       const admin = await store.authenticate(username, password);
-      res.json(admin);
+      //res.json(admin);
+      next();
     }
   } catch (err) {
     res.status(401);
@@ -45,16 +46,8 @@ const authenticate = async (req: Request, res: Response) => {
 const find = async (req: Request, res: Response) => {
   const username = req.body.username;
   try {
-    const authHeader: string = req.headers.authorization as string;
-    const token: string = authHeader.split(' ')[1];
-    const decoded: { admin: Admin, iat: number } =
-      jwt.verify(token, process.env.TOKEN_SECRET as string) as { admin: Admin, iat: number };
-    if (decoded.admin.account !== 'admin') {
-      throw new Error('Not admin account');
-    } else {
-      const id = await store.find(username);
-      res.json(id);
-    }
+    const id = await store.find(username);
+    res.json(id);
   } catch (err) {
     res.status(401);
     res.json(err);
@@ -66,16 +59,8 @@ const updateName = async (req: Request, res: Response) => {
   const newFirstname = req.body.newFirstname;
   const newLastname = req.body.newLastname;
   try {
-    const authHeader: string = req.headers.authorization as string;
-    const token: string = authHeader.split(' ')[1];
-    const decoded: { admin: Admin, iat: number } =
-      jwt.verify(token, process.env.TOKEN_SECRET as string) as { admin: Admin, iat: number };
-    if (decoded.admin.account !== 'admin') {
-      throw new Error('Not admin account');
-    } else {
-      const update = await store.updateName(newFirstname, newLastname, username);
-      res.json(update);
-    }
+    const update = await store.updateName(newFirstname, newLastname, username);
+    res.json(update);
   } catch (err) {
     res.status(401);
     res.json(err);
@@ -86,16 +71,8 @@ const updateUser = async (req: Request, res: Response) => {
   const username = req.body.username;
   const newUsername = req.body.newUsername;
   try {
-    const authHeader: string = req.headers.authorization as string;
-    const token: string = authHeader.split(' ')[1];
-    const decoded: { admin: Admin, iat: number } =
-      jwt.verify(token, process.env.TOKEN_SECRET as string) as { admin: Admin, iat: number };
-    if (decoded.admin.account !== 'admin') {
-      throw new Error('Not admin account');
-    } else {
-      const update = await store.updateUser(username, newUsername);
-      res.json(update);
-    }
+    const update = await store.updateUser(username, newUsername);
+    res.json(update);
   } catch (err) {
     res.status(401);
     res.json(err);
@@ -106,16 +83,8 @@ const updatePassword = async (req: Request, res: Response) => {
   const username = req.body.username;
   const newPassword = req.body.newPassword;
   try {
-    const authHeader: string = req.headers.authorization as string;
-    const token: string = authHeader.split(' ')[1];
-    const decoded: { admin: Admin, iat: number } =
-      jwt.verify(token, process.env.TOKEN_SECRET as string) as { admin: Admin, iat: number };
-    if (decoded.admin.account !== 'admin') {
-      throw new Error('Not admin account');
-    } else {
-      const update = await store.updatePassword(username, newPassword);
-      res.json(update);
-    }
+    const update = await store.updatePassword(username, newPassword);
+    res.json(update);
   } catch (err) {
     res.status(401);
     res.json(err);
@@ -125,16 +94,8 @@ const updatePassword = async (req: Request, res: Response) => {
 const remove = async (req: Request, res: Response) => {
   const id = req.body.id;
   try {
-    const authHeader: string = req.headers.authorization as string;
-    const token: string = authHeader.split(' ')[1];
-    const decoded: { admin: Admin, iat: number } =
-      jwt.verify(token, process.env.TOKEN_SECRET as string) as { admin: Admin, iat: number };
-    if (decoded.admin.account !== 'admin') {
-      throw new Error('Not admin account');
-    } else {
-      await store.remove(id);
-      res.send('Admin deleted');
-    }
+    await store.remove(id);
+    res.send('Admin deleted');
   } catch (err) {
     res.status(401);
     res.json(err);
@@ -143,16 +104,8 @@ const remove = async (req: Request, res: Response) => {
 
 const indexUser = async (req: Request, res: Response) => {
   try {
-    const authHeader: string = req.headers.authorization as string;
-    const token: string = authHeader.split(' ')[1];
-    const decoded: { admin: Admin, iat: number } =
-      jwt.verify(token, process.env.TOKEN_SECRET as string) as { admin: Admin, iat: number };
-    if (decoded.admin.account !== 'admin') {
-      throw new Error('Not admin account');
-    } else {
-      const index = await store.indexUser();
-      res.json(index);
-    }
+    const index = await store.indexUser();
+    res.json(index);
   } catch (err) {
     res.status(401);
     res.json(err);
@@ -160,14 +113,14 @@ const indexUser = async (req: Request, res: Response) => {
 }
 
 const adminRoutes = (app: express.Application) => {
-  app.get('/admin', find);
   app.post('/admin', create);
   app.post('/admin/auth', authenticate);
-  app.put('/admin/name', updateName);
-  app.put('/admin/user', updateUser);
-  app.put('/admin/pass', updatePassword);
-  app.delete('/admin', remove);
-  app.get('/admin/userindex', indexUser);
+  app.put('/admin/name', authenticate, updateName);
+  app.put('/admin/user', authenticate, updateUser);
+  app.put('/admin/pass', authenticate, updatePassword);
+  app.delete('/admin', authenticate, remove);
+  app.get('/admin', authenticate, find);
+  app.get('/admin/users', authenticate, indexUser);
 };
 
 export default adminRoutes;
