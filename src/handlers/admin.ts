@@ -30,7 +30,6 @@ const authenticate = async (req: Request, res: Response) => {
     const token: string = authHeader.split(' ')[1];
     const decoded: { admin: Admin, iat: number } =
       jwt.verify(token, process.env.TOKEN_SECRET as string) as { admin: Admin, iat: number };
-    console.log(decoded);
     if (decoded.admin.account !== 'admin') {
       throw new Error('Not admin account');
     } else {
@@ -48,9 +47,14 @@ const find = async (req: Request, res: Response) => {
   try {
     const authHeader: string = req.headers.authorization as string;
     const token: string = authHeader.split(' ')[1];
-    jwt.verify(token, process.env.TOKEN_SECRET as string) as { user: { id: number, username: string, passwordDigest: string }, iat: number };
-    const id = await store.find(username);
-    res.json(id);
+    const decoded: { admin: Admin, iat: number } =
+      jwt.verify(token, process.env.TOKEN_SECRET as string) as { admin: Admin, iat: number };
+    if (decoded.admin.account !== 'admin') {
+      throw new Error('Not admin account');
+    } else {
+      const id = await store.find(username);
+      res.json(id);
+    }
   } catch (err) {
     res.status(401);
     res.json(err);
@@ -64,9 +68,14 @@ const updateName = async (req: Request, res: Response) => {
   try {
     const authHeader: string = req.headers.authorization as string;
     const token: string = authHeader.split(' ')[1];
-    jwt.verify(token, process.env.TOKEN_SECRET as string) as { user: { id: number, username: string, passwordDigest: string }, iat: number };
-    const update = await store.updateName(newFirstname, newLastname, username);
-    res.json(update);
+    const decoded: { admin: Admin, iat: number } =
+      jwt.verify(token, process.env.TOKEN_SECRET as string) as { admin: Admin, iat: number };
+    if (decoded.admin.account !== 'admin') {
+      throw new Error('Not admin account');
+    } else {
+      const update = await store.updateName(newFirstname, newLastname, username);
+      res.json(update);
+    }
   } catch (err) {
     res.status(401);
     res.json(err);
@@ -79,9 +88,14 @@ const updateUser = async (req: Request, res: Response) => {
   try {
     const authHeader: string = req.headers.authorization as string;
     const token: string = authHeader.split(' ')[1];
-    jwt.verify(token, process.env.TOKEN_SECRET as string) as { user: { id: number, username: string, passwordDigest: string }, iat: number };
-    const update = await store.updateUser(username, newUsername);
-    res.json(update);
+    const decoded: { admin: Admin, iat: number } =
+      jwt.verify(token, process.env.TOKEN_SECRET as string) as { admin: Admin, iat: number };
+    if (decoded.admin.account !== 'admin') {
+      throw new Error('Not admin account');
+    } else {
+      const update = await store.updateUser(username, newUsername);
+      res.json(update);
+    }
   } catch (err) {
     res.status(401);
     res.json(err);
@@ -94,9 +108,14 @@ const updatePassword = async (req: Request, res: Response) => {
   try {
     const authHeader: string = req.headers.authorization as string;
     const token: string = authHeader.split(' ')[1];
-    jwt.verify(token, process.env.TOKEN_SECRET as string) as { user: { id: number, username: string, passwordDigest: string }, iat: number };
-    const update = await store.updatePassword(username, newPassword);
-    res.json(update);
+    const decoded: { admin: Admin, iat: number } =
+      jwt.verify(token, process.env.TOKEN_SECRET as string) as { admin: Admin, iat: number };
+    if (decoded.admin.account !== 'admin') {
+      throw new Error('Not admin account');
+    } else {
+      const update = await store.updatePassword(username, newPassword);
+      res.json(update);
+    }
   } catch (err) {
     res.status(401);
     res.json(err);
@@ -108,9 +127,14 @@ const remove = async (req: Request, res: Response) => {
   try {
     const authHeader: string = req.headers.authorization as string;
     const token: string = authHeader.split(' ')[1];
-    jwt.verify(token, process.env.TOKEN_SECRET as string) as { user: { id: number, username: string, passwordDigest: string }, iat: number };
-    await store.remove(id);
-    res.send('Admin deleted');
+    const decoded: { admin: Admin, iat: number } =
+      jwt.verify(token, process.env.TOKEN_SECRET as string) as { admin: Admin, iat: number };
+    if (decoded.admin.account !== 'admin') {
+      throw new Error('Not admin account');
+    } else {
+      await store.remove(id);
+      res.send('Admin deleted');
+    }
   } catch (err) {
     res.status(401);
     res.json(err);
@@ -121,9 +145,14 @@ const indexUser = async (req: Request, res: Response) => {
   try {
     const authHeader: string = req.headers.authorization as string;
     const token: string = authHeader.split(' ')[1];
-    jwt.verify(token, process.env.TOKEN_SECRET as string) as { user: { id: number, username: string, passwordDigest: string }, iat:number };
-    const index = await store.indexUser();
-    res.json(index);
+    const decoded: { admin: Admin, iat: number } =
+      jwt.verify(token, process.env.TOKEN_SECRET as string) as { admin: Admin, iat: number };
+    if (decoded.admin.account !== 'admin') {
+      throw new Error('Not admin account');
+    } else {
+      const index = await store.indexUser();
+      res.json(index);
+    }
   } catch (err) {
     res.status(401);
     res.json(err);
