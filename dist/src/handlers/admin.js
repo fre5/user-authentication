@@ -65,7 +65,7 @@ var create = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 return [3 /*break*/, 4];
             case 3:
                 err_1 = _a.sent();
-                res.status(401);
+                res.status(400);
                 res.json(err_1);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
@@ -73,7 +73,7 @@ var create = function (req, res) { return __awaiter(void 0, void 0, void 0, func
     });
 }); };
 var authenticate = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var username, password, authHeader, token, decoded, admin, err_2;
+    var username, password, authHeader, token, decoded, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -89,18 +89,24 @@ var authenticate = function (req, res, next) { return __awaiter(void 0, void 0, 
                 throw new Error('Not admin account');
             case 2: return [4 /*yield*/, store.authenticate(username, password)];
             case 3:
-                admin = _a.sent();
-                //res.json(admin);
+                _a.sent();
                 next();
                 _a.label = 4;
             case 4: return [3 /*break*/, 6];
             case 5:
                 err_2 = _a.sent();
                 res.status(401);
-                res.json(err_2);
+                res.send(err_2);
                 return [3 /*break*/, 6];
             case 6: return [2 /*return*/];
         }
+    });
+}); };
+var postAuthentication = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        res.status(200);
+        res.send('Authentication successful');
+        return [2 /*return*/];
     });
 }); };
 var find = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -140,7 +146,7 @@ var updateName = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                 return [4 /*yield*/, store.updateName(newFirstname, newLastname, username)];
             case 2:
                 update = _a.sent();
-                res.json(update);
+                res.send(update);
                 return [3 /*break*/, 4];
             case 3:
                 err_4 = _a.sent();
@@ -164,7 +170,7 @@ var updateUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                 return [4 /*yield*/, store.updateUser(username, newUsername)];
             case 2:
                 update = _a.sent();
-                res.json(update);
+                res.send(update);
                 return [3 /*break*/, 4];
             case 3:
                 err_5 = _a.sent();
@@ -188,7 +194,7 @@ var updatePassword = function (req, res) { return __awaiter(void 0, void 0, void
                 return [4 /*yield*/, store.updatePassword(username, newPassword)];
             case 2:
                 update = _a.sent();
-                res.json(update);
+                res.send(update);
                 return [3 /*break*/, 4];
             case 3:
                 err_6 = _a.sent();
@@ -200,15 +206,15 @@ var updatePassword = function (req, res) { return __awaiter(void 0, void 0, void
     });
 }); };
 var remove = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, err_7;
+    var username, err_7;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                id = req.body.id;
+                username = req.body.username;
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, store.remove(id)];
+                return [4 /*yield*/, store.remove(username)];
             case 2:
                 _a.sent();
                 res.send('Admin deleted');
@@ -244,7 +250,7 @@ var indexUser = function (req, res) { return __awaiter(void 0, void 0, void 0, f
 }); };
 var adminRoutes = function (app) {
     app.post('/admin', create);
-    app.post('/admin/auth', authenticate);
+    app.post('/admin/auth', authenticate, postAuthentication);
     app.put('/admin/name', authenticate, updateName);
     app.put('/admin/user', authenticate, updateUser);
     app.put('/admin/pass', authenticate, updatePassword);

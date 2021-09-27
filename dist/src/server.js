@@ -15,3 +15,4 @@ app.use(body_parser_1.default.json());
 app.listen(port, function () {
     console.log("Server active and listening to port " + port);
 });
+exports.default = app;

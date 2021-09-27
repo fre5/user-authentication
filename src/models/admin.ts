@@ -66,7 +66,7 @@ export class AdminStore {
     }
   }
 
-  async updateName (newFirstname: string, newLastname: string, username: string): Promise<string> {
+  async updateName (newFirstname: string, newLastname: string, username: string): Promise<string|undefined> {
     try {
       // @ts-ignore
       const conn = await Client.connect();
@@ -106,7 +106,7 @@ export class AdminStore {
     }
   }
 
-  async updatePassword (username: string, newPassword: string): Promise<string> {
+  async updatePassword (username: string, newPassword: string): Promise<string|undefined> {
     try {
       // @ts-ignore
       const same = await this.authenticate(username, newPassword);
@@ -124,16 +124,16 @@ export class AdminStore {
     }
   }
 
-  async remove (id: number): Promise<string> {
+  async remove (username: string): Promise<string> {
     try {
       // @ts-ignore
       const conn = await Client.connect();
-      const sql = 'DELETE FROM admin WHERE id=($1)';
-      await conn.query(sql, [id]);
+      const sql = 'DELETE FROM admin WHERE username=($1)';
+      await conn.query(sql, [username]);
       conn.release();
       return 'Admin account removal success';
     } catch (err) {
-      throw new Error(`Unable to delete user id ${id}`);
+      throw new Error(`Unable to delete user username ${username}`);
     }
   }
 

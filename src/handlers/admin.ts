@@ -17,7 +17,7 @@ const create = async (req: Request, res: Response) => {
     const token = jwt.sign({ admin: newAdmin }, process.env.TOKEN_SECRET as string);
     res.json(token);
   } catch (err) {
-    res.status(401);
+    res.status(400);
     res.json(err);
   }
 };
@@ -40,6 +40,11 @@ const authenticate = async (req: Request, res: Response, next: NextFunction) => 
     res.status(401);
     res.send(err);
   }
+};
+
+const postAuthentication = async (req: Request, res: Response) => {
+  res.status(200);
+  res.send('Authentication successful');
 };
 
 const find = async (req: Request, res: Response) => {
@@ -91,9 +96,9 @@ const updatePassword = async (req: Request, res: Response) => {
 };
 
 const remove = async (req: Request, res: Response) => {
-  const id = req.body.id;
+  const username = req.body.username;
   try {
-    await store.remove(id);
+    await store.remove(username);
     res.send('Admin deleted');
   } catch (err) {
     res.status(401);
@@ -113,7 +118,7 @@ const indexUser = async (req: Request, res: Response) => {
 
 const adminRoutes = (app: express.Application) => {
   app.post('/admin', create);
-  app.post('/admin/auth', authenticate);
+  app.post('/admin/auth', authenticate, postAuthentication);
   app.put('/admin/name', authenticate, updateName);
   app.put('/admin/user', authenticate, updateUser);
   app.put('/admin/pass', authenticate, updatePassword);

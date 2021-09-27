@@ -74,7 +74,7 @@ export class UserStore {
       let result = await conn.query(sql, [username]);
       result = result.rows[0];
       if (result.firstname !== newFirstname || result.lastName !== newLastname) {
-        sql = 'UPDATE user SET firstname=($1), lastname=($2) WHERE username=($3)';
+        sql = 'UPDATE users SET firstname=($1), lastname=($2) WHERE username=($3)';
         await conn.query(sql, [newFirstname, newLastname, username]);
       }
       conn.release();
@@ -104,7 +104,7 @@ export class UserStore {
     }
   }
 
-  async updatePassword (username: string, newPassword: string): Promise<string> {
+  async updatePassword (username: string, newPassword: string): Promise<string|undefined> {
     try {
       const same = await this.authenticate(username, newPassword);
       if (!same) {
@@ -121,16 +121,16 @@ export class UserStore {
     }
   }
 
-  async remove (id: number): Promise<string> {
+  async remove (username: string): Promise<string> {
     try {
       // @ts-ignore
       const conn = await Client.connect();
-      const sql = 'DELETE FROM users WHERE id=($1)';
-      await conn.query(sql, [id]);
+      const sql = 'DELETE FROM users WHERE username=($1)';
+      await conn.query(sql, [username]);
       conn.release();
       return 'User account removal success';
     } catch (err) {
-      throw new Error(`Unable to delete user id ${id}`);
+      throw new Error(`Unable to delete user username ${username}`);
     }
   }
 }

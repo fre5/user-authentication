@@ -37,6 +37,11 @@ const authenticate = async (req: Request, res: Response, next: NextFunction) => 
   }
 };
 
+const postAuthentication = async (req: Request, res: Response) => {
+  res.status(200);
+  res.send('Authentication successful');
+};
+
 const find = async (req: Request, res: Response) => {
   const username = req.body.username;
   try {
@@ -86,9 +91,9 @@ const updatePassword = async (req: Request, res: Response) => {
 };
 
 const remove = async (req: Request, res: Response) => {
-  const id = req.body.id;
+  const username = req.body.username;
   try {
-    await store.remove(id);
+    await store.remove(username);
     res.send('User deleted');
   } catch (err) {
     res.status(401);
@@ -99,7 +104,7 @@ const remove = async (req: Request, res: Response) => {
 const userRoutes = (app: express.Application) => {
   app.get('/user', find);
   app.post('/user', create);
-  app.post('/user/auth', authenticate);
+  app.post('/user/auth', authenticate, postAuthentication);
   app.put('/user/name', authenticate, updateName);
   app.put('/user/user', authenticate, updateUser);
   app.put('/user/pass', authenticate, updatePassword);

@@ -14,3 +14,5 @@ userRoutes(app);
 app.listen(port, () => {
   console.log(`Server active and listening to port ${port}`);
 });
+
+export default app;

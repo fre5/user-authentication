@@ -148,14 +148,14 @@ var UserStore = /** @class */ (function () {
                         result = _a.sent();
                         result = result.rows[0];
                         if (!(result.firstname !== newFirstname || result.lastName !== newLastname)) return [3 /*break*/, 4];
-                        sql = 'UPDATE user SET firstname=($1), lastname=($2) WHERE username=($3)';
+                        sql = 'UPDATE users SET firstname=($1), lastname=($2) WHERE username=($3)';
                         return [4 /*yield*/, conn.query(sql, [newFirstname, newLastname, username])];
                     case 3:
                         _a.sent();
                         _a.label = 4;
                     case 4:
                         conn.release();
-                        return [3 /*break*/, 6];
+                        return [2 /*return*/, 'Name update success'];
                     case 5:
                         err_3 = _a.sent();
                         throw new Error("Unable to update user information " + err_3);
@@ -187,7 +187,7 @@ var UserStore = /** @class */ (function () {
                     case 4:
                         _a.sent();
                         conn.release();
-                        _a.label = 5;
+                        return [2 /*return*/, 'Username update success'];
                     case 5: return [3 /*break*/, 7];
                     case 6:
                         err_4 = _a.sent();
@@ -217,7 +217,7 @@ var UserStore = /** @class */ (function () {
                     case 3:
                         _a.sent();
                         conn.release();
-                        _a.label = 4;
+                        return [2 /*return*/, 'Password update success'];
                     case 4: return [3 /*break*/, 6];
                     case 5:
                         err_5 = _a.sent();
@@ -227,7 +227,7 @@ var UserStore = /** @class */ (function () {
             });
         });
     };
-    UserStore.prototype.remove = function (id) {
+    UserStore.prototype.remove = function (username) {
         return __awaiter(this, void 0, void 0, function () {
             var conn, sql, err_6;
             return __generator(this, function (_a) {
@@ -237,15 +237,15 @@ var UserStore = /** @class */ (function () {
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
-                        sql = 'DELETE FROM users WHERE id=($1)';
-                        return [4 /*yield*/, conn.query(sql, [id])];
+                        sql = 'DELETE FROM users WHERE username=($1)';
+                        return [4 /*yield*/, conn.query(sql, [username])];
                     case 2:
                         _a.sent();
                         conn.release();
-                        return [3 /*break*/, 4];
+                        return [2 /*return*/, 'User account removal success'];
                     case 3:
                         err_6 = _a.sent();
-                        throw new Error("Unable to delete user id " + id);
+                        throw new Error("Unable to delete user username " + username);
                     case 4: return [2 /*return*/];
                 }
             });
