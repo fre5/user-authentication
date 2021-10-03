@@ -16,8 +16,10 @@ const create = async (req: Request, res: Response) => {
     const newAdmin = await store.create(admin);
     const token = jwt.sign({ admin: newAdmin }, process.env.TOKEN_SECRET as string);
     res.json(token);
+    res.send('User created');
   } catch (err) {
     res.status(400);
+    res.send('User creation failed');
     res.json(err);
   }
 };
@@ -64,7 +66,7 @@ const updateName = async (req: Request, res: Response) => {
   const newLastname = req.body.newLastname;
   try {
     const update = await store.updateName(newFirstname, newLastname, username);
-    res.send(update);
+    res.send(`Name updated: ${update}`);
   } catch (err) {
     res.status(401);
     res.json(err);
@@ -76,7 +78,7 @@ const updateUser = async (req: Request, res: Response) => {
   const newUsername = req.body.newUsername;
   try {
     const update = await store.updateUser(username, newUsername);
-    res.send(update);
+    res.send(`Username updated: ${update}`);
   } catch (err) {
     res.status(401);
     res.json(err);
@@ -88,7 +90,7 @@ const updatePassword = async (req: Request, res: Response) => {
   const newPassword = req.body.newPassword;
   try {
     const update = await store.updatePassword(username, newPassword);
-    res.send(update);
+    res.send('Password updated');
   } catch (err) {
     res.status(401);
     res.json(err);
