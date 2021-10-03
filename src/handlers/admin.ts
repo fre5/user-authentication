@@ -16,10 +16,9 @@ const create = async (req: Request, res: Response) => {
     const newAdmin = await store.create(admin);
     const token = jwt.sign({ admin: newAdmin }, process.env.TOKEN_SECRET as string);
     res.json(token);
-    res.send('User created');
   } catch (err) {
     res.status(400);
-    res.send('User creation failed');
+    res.send('Admin creation failed');
     res.json(err);
   }
 };
